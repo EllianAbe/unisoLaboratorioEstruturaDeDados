@@ -1,134 +1,120 @@
-#include<stdlib.h>
-#include<stdio.h>
-#define true 1
-#define false 0
+// Ellian Yemon Abe 00098381. 4o Semestre de Ciencia da Computacao.
+#include <stdio.h>
+#include <stdlib.h>
 
-// Apenas para representar que o valor da chave
-// pode ser qualquer coisa que precisemos,
-// renomeamos o int para usar dentro da estrutura
-typedef int TIPOCHAVE;
+// defina um tipo de ponteiro que represente um nó de uma arvore
+struct nd {
+	int	val;
 
-// Estrutura que representa um nó
-typedef struct no{
-	TIPOCHAVE chave;
-	struct no *esq;
-	struct no *dir;
+	struct nd*	lft;
+	struct nd*	rgt;
 };
+// node element
+// val - value
+// lft - left node
+// rgt - right node
 
-// Para simplificar e não precisarmos ficar usando a notação de ponteiro o tempo todo
-// podemos definir um tipo novo para o nosso código
-typedef struct no* PONT;
+typedef struct nd* Node;
 
-PONT inicializa();
-PONT criarNo(int valor);
-PONT adiciona (PONT raiz, PONT no);
-PONT contem(TIPOCHAVE chave, PONT raiz);
-int totalDeNos(PONT raiz);
-void exibirArvore(PONT raiz);
-PONT buscaNo(PONT raiz, TIPOCHAVE ch, PONT *pai);
-void addIntegers();
+//função que cria novo nó
+Node createNode(int value, Node left, Node right)
+{
+    Node newNode = (Node)malloc(sizeof(struct nd));
+    newNode->val = value;
+    newNode->lft = left;
+    newNode->rgt = right;
 
-int main (){
-	addIntegers();
-	return 0;
+    return(newNode);
 }
 
-// Inicializa  árvore, como no nosso caso a raiz será o primeiro
-// elemento, então ela simplesmente retorna null
-PONT inicializa(){
-	return(NULL);
+//
+Node setNewNode(int value)
+{
+    return createNode(value, NULL, NULL);
 }
 
-// Cria um novo nó com o valor de chave passado como parâmetro
-PONT criarNo(int valor){
-	PONT novo = (PONT) malloc(sizeof(PONT));
-	novo->chave = valor;
-	novo->esq = NULL;
-	novo->dir = NULL;
-	return novo;
+/* Função que cria uma árvore e retorna NULL */
+Node genTree()
+{
+    return NULL;
 }
 
-// Como convenção teremos que não temos chaves repetidas.
-// Como a ideia é buscar elementos, não faz muito sentido
-// buscarmos coisas repetidas, identificadores devem ser unicos.
-PONT adiciona (PONT raiz, PONT no){
-	//Se a raiz for null, inserimos lá
-	if(raiz == NULL){
-            return no;
-	}
-	//Senão
-	else{
-		// Se a chave do elemento a ser inserido for menor que a da raiz: insere na subarvore da esquerda
-		if(no->chave < raiz->chave)
-			raiz->esq = adiciona(raiz->esq, no);
-		//Senão, insere na subararvore da direita.
-		else
-			raiz->dir = adiciona(raiz->dir, no);
-	}
+// arvore contem nó?
+Node contains(int value, Node root) {
+    if (root == NULL) return NULL;
 
-	return raiz;
+    if(root->val == value) return root;
+
+    if(root->val > value)
+            return(contains(value, root->rgt));
+
+    return(contains(value, root->lft));
 }
 
-// Busca uma chave na arvore
-PONT contem(TIPOCHAVE chave, PONT raiz){
-	// Se a raiz for null, não temos onde procurar
-	if(raiz == NULL) return NULL;
-	// Se a chave buscada for a chave da raiz, já encontramose retornamos a propria raiz
-	if(raiz->chave == chave) return raiz;
-	// Se a chave buscada for menor que a chave da raiz, buscamos na subarvore da esquerda
-	if(raiz->chave > chave)
-		return contem(chave, raiz->esq);
+Node addNode(Node root, Node node) {
+    if(root == NULL){
+            root = node;
+    }
+    else {
+        if(node->val < root->val) {
+            root->lft = addNode(root->lft, node);
+        }
+        else {
+            root->rgt = addNode(root->rgt, node);
+        }
+    }
 
-	//Senão, fazemos a busca na subarvore da direita
-	return contem(chave, raiz->dir);
+    return root;
 }
 
+// mostra arvore
+void showTree(Node root) {
+    if(root != NULL) {
+        printf("%d", root->val);
+        printf("(");
 
-// Contagem do total de nós na árvore
-int totalDeNos(PONT raiz){
-	// Se a raiz for null, não temos nó nenhum, logo total é 0
-	if(raiz == NULL) return 0;
+        showTree(root->lft);
+        showTree(root->rgt);
 
-	// Caminhamos pela subarvore da esquerda, quando voltamos para raiz, contamos ela
-	// e depois vamos para subarvore da direita.
-	// Aqui percebemos explicitamente que percorremos a árovre in-ordem.
-	// Podemos alterar o método percorre-la e não vai influenciar na contagem,
-	// mas se percorrermos para a impressão dos dados da árvore, por exemplo,
-	// cada modo de percorrer produzirá um resultado diferente.
-	return totalDeNos(raiz->esq) + 1 + totalDeNos(raiz->dir);
-
+        printf(")");
+    }
 }
 
-// Nessa exibição usamos a notação onde usamos parenteses para agrupar as árvores e suas
-// suarvores
-void exibirArvore(PONT raiz){
-	if(raiz != NULL){
-		printf("%i", raiz->chave);
-		printf("(");
-		exibirArvore(raiz->esq);
-		exibirArvore(raiz->dir);
-		printf(")");
-	}
+// conta nós
+int countNodes(Node root) {
+    if(root == NULL) return 0;
+
+    return countNodes(root->lft) + 1 + countNodes(root->rgt);
 }
 
-// essa função recebe inteiros positivos do usuário, os adiciona a uma árvore e mostra a arvore ao final do processo.
+/*  adiciona N inteiros a arvore binária.
+    só aceita inteiros positivos (considerando 0 como um valor neutro não positivo)
+*/
 void addIntegers() {
     // initialize vars
     int user_choice = 0;
-    PONT tree = inicializa();
+    Node tree = genTree();
+    Node tmpNode;
 
     do {
-        printf("#%d - insira um valor inteiro positivo: ", totalDeNos(tree));
+        printf("#%d - insira um valor inteiro positivo: ", countNodes(tree));
         scanf("%d", &user_choice);
         // se o usuário inserir negativo, encerrar as entradas de dados;
         if(user_choice <= 0) break;
 
         // adicionar valor à arvore;
-        PONT newNode = criarNo(user_choice);
-        tree = adiciona(tree, newNode);
+        tmpNode = setNewNode(user_choice);
+
+        tree = addNode(tree, tmpNode);
 
     } while(user_choice > 0);
 
-    printf("\n\nO numero de elementos inseridos foi: %d\nSegue a arvore inserida: ", totalDeNos(tree));
-    exibirArvore(tree);
+    printf("\n\nO numero de elementos inseridos foi: %d\nSegue a arvore inserida: ", countNodes(tree));
+    showTree(tree);
 }
+
+int main(){
+    addIntegers();
+    return(0);
+}
+
