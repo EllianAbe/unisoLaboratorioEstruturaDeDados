@@ -111,6 +111,7 @@ void exibirArvore(PONT raiz){
 	}
 }
 
+// essa função recebe inteiros positivos do usuário, os adiciona a uma árvore e mostra a arvore ao final do processo.
 void addIntegers() {
     // initialize vars
     int user_choice = 0;
