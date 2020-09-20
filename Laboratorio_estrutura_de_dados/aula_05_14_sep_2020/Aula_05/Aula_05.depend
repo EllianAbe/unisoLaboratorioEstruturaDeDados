@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1600625363 source:/home/ellian/Documentos/UNISO/2020_2/unisoLaboratorioEstruturaDeDados/Laboratorio_estrutura_de_dados/aula_05_31_sep_2020/Aula_05/main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
