@@ -46,9 +46,39 @@ Node contains(int value, Node root) {
     if(root->val == value) return root;
 
     if(root->val > value)
-            return(contains(value, root->rgt));
+            return(contains(value, root->lft));
 
-    return(contains(value, root->lft));
+    return(contains(value, root->rgt));
+}
+
+//CONTAIN ESPECIALIZADO
+void contains2(int value, Node root) {
+    Node n = contains(value, root);
+
+    // se o retorno foi nulo o valor nao e um no da arvore de busca
+    if(!n){
+        printf("o valor nao foi encontrado na arvore ");
+        return;
+    }
+    // se o retorno foi igual a raiz recebida no parametro, o valor esta na raiz da arvore
+    if(n==root){
+        printf("\no no encontrado e a raiz");
+        if(n->lft) printf("\noelemento da esquerda e: %d", n->lft->val);
+        if(n->rgt) printf("\noelemento da direita e: %d", n->rgt->val);
+        return;
+    }
+    // se os ponteiros da direita e da esquerda sao nulos, o no e uma folha
+    if(!n->lft && !n->rgt){
+        printf("\no no encontrado e uma folha");
+    }
+    // caso contrario, o no e um no interno
+    else{
+        printf("\no no encontrado e um no interno");
+        if(n->lft) printf("\noelemento da esquerda e: %d", n->lft->val);
+        if(n->rgt) printf("\noelemento da direita e: %d", n->rgt->val);
+    }
+
+
 }
 
 Node addNode(Node root, Node node) {
@@ -109,12 +139,18 @@ void addIntegers() {
 
     } while(user_choice > 0);
 
+
     printf("\n\nO numero de elementos inseridos foi: %d\nSegue a arvore inserida: ", countNodes(tree));
     showTree(tree);
+
+
+    // novas funcionalidades
+    printf("insira um dado a ser buscado: ");
+    int val;
+    scanf("%d", &val);
+    contains2(val, tree);
 }
 
 int main(){
     addIntegers();
-    return(0);
 }
-
